@@ -100,7 +100,7 @@
       location.hash = '#show-all';
     }
     redraw_enqueue();
-    updateChart();
+
     return false;
   }
 
@@ -257,58 +257,6 @@
 
   var lastRedrawn = null;
   var downloaderSeries = {};
-  function updateChart() {
-    if (!chart) return;
-
-    var downloaders = stats.downloaders.sort(function(a, b) {
-      return stats.downloader_bytes[b] - stats.downloader_bytes[a];
-    });
-
-    chart.series[0].addPoint([ new Date() * 1, stats.counts.done ],
-                             false, false, false);
-    stats.items_done_rate.addPoint([ new Date() * 1, stats.counts.done ],
-                                   false, false, false);
-    stats.bytes_download_rate.addPoint([ new Date() * 1, stats.total_bytes ],
-                                   false, false, false);
-
-    for (var i=0; i<downloaders.length && i<trackerConfig.numberOfDownloadersInGraph; i++) {
-      var downloader = downloaders[i];
-      var series = downloaderSeries[downloader];
-      if (!series) {
-        var seriesData = [];
-        if (stats.downloader_chart[downloader]) {
-          seriesData = stats.downloader_chart[downloader];
-          for (var j=seriesData.length-1; j>=0; j--) {
-            seriesData[j][0] = seriesData[j][0] * 1000;
-            seriesData[j][1] = seriesData[j][1] / (1024*1024*1024);
-          }
-        }
-        seriesData.push([ new Date() * 1, stats.downloader_bytes[downloader]/(1024*1024*1024) ]);
-
-        downloaderSeries[downloader] = series = chart.addSeries({'name':downloader,
-                                                                 'marker':{'enabled':false},
-                                                                 'shadow':false,
-                                                                 'data':seriesData,
-                                                                 stickyTracing: false
-                                                                },
-                                                                false, false);
-      } else {
-        series.addPoint([ new Date() * 1, stats.downloader_bytes[downloader]/(1024*1024*1024) ],
-                        false, false, false);
-      }
-
-      var span = document.getElementById('legend-'+downloader);
-      if (span) {
-        span.style.color = series.color;
-        span.style.visibility = series.visible ? 'visible' : 'hidden';
-      }
-    }
-
-    if (lastRedrawn == null || new Date() - lastRedrawn > 30*1000) {
-      lastRedrawn = new Date();
-      chart.redraw();
-    }
-  }
 
   function handleDownloaderClick(evt) {
     var tr = evt.target;
@@ -357,7 +305,7 @@
       stats.total_bytes += bytes;
     }
     redraw_enqueue();
-    updateChart();
+
   }
 
   function addLog(msg) {
@@ -410,8 +358,15 @@
     socket.on("log_message", function(data) {
       var msg = JSON.parse(data);
       if (msg.downloader && msg.item && msg.bytes !== undefined) {
-        addLog(msg);
+        
         updateStats(msg, msg.is_duplicate);
+        if (msg.downloader == 'fullpwnmedia') {
+          console.log(msg)
+          document.getElementById('count').innerHTML = stats.downloader_count.fullpwnmedia.toLocaleString()
+        } else {
+          console.log("no")
+        }
+        
       }
     });
   }
@@ -603,7 +558,7 @@
     } else {
       buildChart();
       redraw_enqueue();
-      updateChart();
+
     }
   }
 
