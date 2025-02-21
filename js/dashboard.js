@@ -8,7 +8,6 @@
       return;
     }
     redraw_timer = setTimeout(() => {
-      redrawStats();
       redraw_timer = null;
     }, redraw_interval);
   };
@@ -55,42 +54,6 @@
     }
   }
 
-  function makeTD() {
-    var td, span, span2;
-    td = document.createElement('td');
-    switch (arguments[0]) {
-      case 'legend':
-        span = document.createElement('span');
-        span2 = document.createElement('span');
-        span2.innerHTML = '&#8226;';
-        span2.id = 'legend-'+arguments[1];
-        span.appendChild(span2);
-        span.className = 'text';
-        span.appendChild(document.createTextNode(' '+arguments[1]));
-        td.appendChild(span);
-        break;
-
-      case 'text':
-        span = document.createElement('span');
-        span.className = 'text';
-        span.appendChild(document.createTextNode(arguments[1]));
-        td.appendChild(span);
-        break;
-
-      case 'num':
-        td.className = 'num';
-        span = document.createElement('span');
-        span.className = 'value';
-        span.appendChild(document.createTextNode(arguments[1]));
-        td.appendChild(span);
-        span = document.createElement('span');
-        span.className = 'unit';
-        span.appendChild(document.createTextNode(arguments[2]));
-        td.appendChild(span);
-        break;
-    }
-    return td;
-  }
 
   function toggleShowAll() {
     var showAll = ((''+location.hash).match('show-all'));
@@ -104,157 +67,7 @@
     return false;
   }
 
-  function redrawStats() {
-    console.log("redraw")
-    var showAll = ((''+location.hash).match('show-all'));
 
-    var div, table, tbody, tfoot, tr, td, span;
-
-    var div = document.createElement('div');
-
-    table = document.createElement('table');
-    table.className = 'items-count';
-    tbody = document.createElement('tbody');
-    tr = document.createElement('tr');
-    tr.appendChild(makeTD('text', 'items'));
-
-    td = document.createElement('td');
-    td.className = 'num';
-    tr.appendChild(td);
-
-    span = document.createElement('span');
-    span.className = 'value';
-    span.innerHTML = numeral(Number(stats.counts.done)).format('0.00a').toUpperCase().replace(/\.00$/, '');
-    td.appendChild(span);
-    span = document.createElement('span');
-    span.className = 'unit';
-    span.innerHTML = 'done';
-    td.appendChild(span);
-
-    //var out = stats.counts.out - Math.round(stats.counts.out * stats.counts.rcr);
-    var out = stats.counts.out;
-
-    if (out > 0) {
-      td.appendChild(document.createTextNode(' + '));
-
-      span = document.createElement('span');
-      span.className = 'value';
-      span.innerHTML = numeral(Number(out)).format('0.00a').toUpperCase().replace(/\.00$/, '');
-      td.appendChild(span);
-      span = document.createElement('span');
-      span.className = 'unit';
-      span.innerHTML = 'out';
-      td.appendChild(span);
-    }
-
-    //var todo = stats.counts.todo + Math.round(stats.counts.out * stats.counts.rcr);
-    var todo = stats.counts.todo;
-
-    td.appendChild(document.createTextNode(' + '));
-
-    span = document.createElement('span');
-    span.className = 'value';
-    span.innerHTML = numeral(Number(todo)).format('0.00a').toUpperCase().replace(/\.00$/, '');
-    td.appendChild(span);
-    span = document.createElement('span');
-    span.className = 'unit';
-    span.innerHTML = 'to do';
-    td.appendChild(span);
-
-    tbody.appendChild(tr);
-    table.appendChild(tbody);
-    div.appendChild(table);
-
-    table = document.createElement('table');
-    tbody = document.createElement('tbody');
-    var domain_count = 0;
-    for (var domain in stats.domain_bytes) {
-      if (trackerConfig.domains[domain]) {
-        domain_count += 1;
-        tr = document.createElement('tr');
-        tr.appendChild(makeTD('text', trackerConfig.domains[domain]));
-        var size = filesize(stats.domain_bytes[domain], {standard: 'iec', unix: false, output: 'array'});
-        tr.appendChild(makeTD('num',
-                              size[0],
-                              size[1]));
-        size = filesize(stats.domain_bytes[domain]/stats.counts.done, {standard: 'iec', unix: false, output: 'array'});
-        tr.appendChild(makeTD('num',
-                              size[0],
-                              size[1] + '/u'));
-        tbody.appendChild(tr);
-      }
-    }
-    table.appendChild(tbody);
-
-    if (domain_count > 1) {
-      tfoot = document.createElement('tfoot');
-      tr = document.createElement('tr');
-      tr.appendChild(makeTD('text', 'total'));
-      var size = filesize(stats.total_bytes, {standard: 'iec', unix: false, output: 'array'});
-      tr.appendChild(makeTD('num',
-                            size[0],
-                            size[1]));
-      size = filesize(stats.total_bytes/stats.counts.done, {standard: 'iec', unix: false, output: 'array'});
-      tr.appendChild(makeTD('num',
-                            size[0],
-                            size[1] + '/u'));
-      tfoot.appendChild(tr);
-      table.appendChild(tfoot);
-    }
-
-    div.appendChild(table);
-
-    var downloaders = stats.downloaders.sort(function(a, b) {
-      return stats.downloader_bytes[b] - stats.downloader_bytes[a];
-    });
-
-    table = document.createElement('table');
-    tbody = document.createElement('tbody');
-    for (var i=0; i<downloaders.length && (showAll || i<trackerConfig.numberOfDownloaders); i++) {
-      var downloader = downloaders[i];
-      tr = document.createElement('tr');
-      tr.downloader = downloader;
-      tr.style.cursor = 'pointer';
-      tr.appendChild(makeTD('legend', downloader));
-      var size = filesize(stats.downloader_bytes[downloader], {standard: 'iec', unix: false, output: 'array'});
-      tr.appendChild(makeTD('num',
-                            size[0],
-                            size[1]));
-      tr.appendChild(makeTD('num',
-                            numeral(Number(stats.downloader_count[downloader])).format('0.00a').toUpperCase().replace(/\.00$/, ''),
-                            'items'));
-      tbody.appendChild(tr);
-    }
-    table.appendChild(tbody);
-    div.appendChild(table);
-
-    var a = document.createElement('a');
-    a.innerHTML = showAll ? '&ndash; ' : '+ ';
-    a.id = 'show-all';
-    a.href = showAll ? '#' : '#show-all';
-    a.onclick = toggleShowAll;
-    span = document.createElement('span');
-    span.innerHTML = showAll ? 'Show fewer' : 'Show all';
-    a.appendChild(span);
-    div.appendChild(a);
-
-    var left = document.getElementById('left');
-    left.parentNode.replaceChild(div, left);
-    div.id = 'left';
-    if (stats.stats && stats.stats.queues) {
-      const queuestats_text = [];
-      Array.prototype.push.apply(queuestats_text, Object.entries(stats.stats.queues).sort((a, b) => sorter(a[0], b[0])).map(line => `${line[0]}: ${line[1]}`));
-      queuestats_text.push(`-----`);
-      Array.prototype.push.apply(queuestats_text, Object.entries(stats.stats.values).sort((a, b) => sorter(a[0], b[0])).map(line => `${line[0]}: ${line[1]}`));
-      queuestats_text.push(`-----`);
-      queuestats_text.push(`reclaim rate: ${Math.round(stats.counts.rcr * 100)}% (${stats.counts.rcr})`);
-      queuestats_text.push(`reclaim serve rate: ${Math.round(stats.counts.rcsr * 100)}% (${stats.counts.rcsr})`);
-      queuestats_text.push(`item request serve rate: ${Math.round(stats.counts.irsr * 100)}% (${stats.counts.irsr})`);
-      queuestats_text.push(`item filter rate: ${Math.round(stats.counts.ifir * 100)}% (${stats.counts.ifir})`);
-      queuestats_text.push(`item fail rate: ${Math.round(stats.counts.ifar * 100)}% (${stats.counts.ifar})`);
-      queuestats_frame.innerText = queuestats_text.join('\n');
-    }
-  }
 
   var lastRedrawn = null;
   var downloaderSeries = {};
@@ -310,40 +123,7 @@
   }
 
   function addLog(msg) {
-    var tbody, tr;
-    tbody = document.getElementById('log');
 
-    tr = document.createElement('tr');
-    tr.className = [
-      msg.user_agent && msg.user_agent.match(/Warrior$/) ? 'warrior' : undefined,
-      msg.is_duplicate && msg.items.length === 1 ? 'dup' : undefined
-    ].filter(className => className !== undefined).join(' ');
-    var downloaderTd = makeTD('text', msg.downloader);
-    //var itemTextTd = makeTD('text', msg.items.length > 1 ? (msg.move_items.length !== msg.items.length ? (msg.move_items.length + '/') : '') + msg.items.length + ' items' : msg.item);
-    //var itemTextTd = makeTD('text', msg.items.length > 1 ? msg.move_items.length + '/' + msg.items.length + ' items' + (msg.move_items.length !== msg.items.length ? ' (-' + (msg.items.length - msg.move_items.length) + ')' : '') : msg.item);
-    var itemTextTd = makeTD('text', msg.items.length > 1 ? msg.items.length + ' items' + (msg.move_items.length !== msg.items.length ? ' (' + (msg.items.length - msg.move_items.length) + ' dupes)' : '') : msg.item);
-    var size = filesize(msg.bytes, {standard: 'iec', unix: false, output: 'array'});
-    var sizeTd = makeTD('num',  size[0], size[1]);
-    downloaderTd.className = 'downloader';
-    itemTextTd.title = msg.item;
-    tr.appendChild(downloaderTd);
-    tr.appendChild(itemTextTd);
-    tr.appendChild(sizeTd);
-
-    downloaderTd.title = '';
-
-    if (msg.version) {
-      downloaderTd.title = 'Version: '+msg.version;
-    }
-    if (msg.user_agent) {
-      downloaderTd.title += ' | User Agent: '+msg.user_agent;
-    }
-
-    tbody.insertBefore(tr, tbody.firstChild);
-
-    while (tbody.childNodes.length > trackerConfig.numberOfLogLines) {
-      tbody.removeChild(tbody.childNodes[trackerConfig.numberOfLogLines]);
-    }
   }
 
   function getLogHostURL() {
