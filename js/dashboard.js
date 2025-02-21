@@ -105,6 +105,7 @@
   }
 
   function redrawStats() {
+    console.log("redraw")
     var showAll = ((''+location.hash).match('show-all'));
 
     var div, table, tbody, tfoot, tr, td, span;
@@ -346,6 +347,7 @@
   }
 
   function getLogHostURL() {
+    console.log("loghost")
     if (document.location.protocol == 'http:') {
       return trackerConfig.logHost;
     } else {
@@ -354,6 +356,7 @@
   }
 
   function startLogClient() {
+    console.log("start log")
     var socket = io.connect(document.location.protocol+'//'+getLogHostURL()+'/'+trackerConfig.logChannel);
     socket.on("log_message", function(data) {
       var msg = JSON.parse(data);
@@ -372,6 +375,7 @@
   }
 
   function initLog() {
+    console.log("init log")
     jQuery.getJSON(document.location.protocol+'//'+getLogHostURL()+'/recent/'+(trackerConfig.logChannel), function(messages) {
       for (var i=0; i<messages.length; i++) {
         var msg = messages[i];
@@ -385,6 +389,7 @@
 
   var chart = null;
   function buildChart() {
+    console.log("chart build")
     var maxMinTimestamp = 0;
     if (stats.items_done_chart.length > 0) {
       maxMinTimestamp = Math.max(maxMinTimestamp, stats.items_done_chart[0][0] * 1000);
@@ -509,6 +514,7 @@
   }
 
   function refreshUpdateStatus() {
+    console.log("refresh update stats")
     if (!trackerConfig.updateStatusPath) return;
 
     jQuery.getJSON(trackerConfig.updateStatusPath, function(data) {
@@ -538,6 +544,7 @@
 
   var previousChartDataUrls = [];
   function handleCharts(newCharts) {
+    console.log("handle charts")
     if (!stats.downloader_chart) stats.downloader_chart = {};
     if (!stats.items_done_chart) stats.items_done_chart = [];
     if (!stats.items_done_chart) stats.items_done_chart = [];
