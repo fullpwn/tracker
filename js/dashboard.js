@@ -135,6 +135,7 @@
 
   function startLogClient() {
     console.log("start log")
+    value = 0;
     var socket = io.connect(document.location.protocol+'//'+getLogHostURL()+'/'+trackerConfig.logChannel);
     socket.on("log_message", function(data) {
       var msg = JSON.parse(data);
@@ -148,11 +149,13 @@
             //console.log(msg)
             document.getElementById('count').innerHTML = stats.downloader_count.fullpwnmedia.toLocaleString()
             document.getElementById( 'loading' ).style.display = 'none';
-            
+            value = 0;
             console.log(msg)
             break;
          case msg.downloader !== 'fullpwnmedia': 
+          value = value + 1;
           console.log('IGN')
+          document.getElementById("ign").innerHTML = value;
           break;
       }
     }
