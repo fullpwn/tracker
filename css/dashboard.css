@@ -1,294 +1,34 @@
-body {
-    font-family: 'Lato', sans-serif;
-    font-size: 20px;
-    /**
-     * Opt out of Chrome's Scroll Anchoring, which can cause dashboard pages
-     * to incorrectly scroll down as new lines appear in the right pane.
-     * https://github.com/WICG/interventions/blob/0063fe5d3d0e086d4f963c8bd612d12b57db0784/scroll-anchoring/explainer.md#exclusion--opt-out-api
-     */
-    overflow-anchor: none;
-  }
-  form {
-    margin: 0;
-    padding: 0;
-  }
-  ul, li {
-    margin: 0;
-    padding: 0;
-    text-indent: 0;
-    list-style: none;
-    font-size: 20px;
-  }
-  table, td, th {
-    padding: 0;
-    margin: 0;
-    border-spacing: 0;
-  }
-  li, td {
-    border: none;
-    font-size: 20px;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  td {
-    height: 30px;
-  }
-  th {
-    text-align: left;
-  }
-  h1 {
-    margin: 0 20px 0 -7px;
-    padding: 0 0 4px 7px;
-    border-bottom: 1px solid #000;
-    font-weight: normal;
-    font-size: 20px;
-  }
-  
-  #update-status {
-    display: none;
-    color: #f00;
-  }
-  
-  #left {
-    float: left;
-    clear: left;
-    position: relative;
-  }
-  #left table {
-    margin-bottom: 30px;
-  }
-  .log {
-    margin-left: 450px;
-  }
-  a#show-all {
-    position: absolute;
-    left: 16px;
-    bottom: 8px;
-    display: block;
-    padding: 0 25px 0 5px;
-    font-size: 15px;
-    font-family: sans-serif;
-    color: #777;
-    border-radius: 7px;
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;
-    text-decoration: none;
-  }
-  a#show-all:active,
-  a#show-all:hover {
-    color: #000;
-    background: #aaa;
-  }
-  a#show-all span {
-    display: inline-block;
-    vertical-align: top;
-    font-size: 12px;
-  }
-  td span {
-    display: inline-block;
-  }
-  td.num {
-    width: 145px;
-    max-width: 145px;
-    overflow: hidden;
-    text-align: right;
-  }
-  span.text {
-    display: inline-block;
-    width: 140px;
-    overflow: hidden;
-  }
-  span.unit {
-    display: inline-block;
-    width: 48px;
-    padding-left: 2px;
-    text-align: left;
-    color: #aaa;
-    font-size: 14px;
-  }
-  tfoot td {
-    border-top: 1px solid #000;
-    height: 29px;
-  }
-  table.items-count {
-    width: 100%;
-  }
-  .items-count td.num {
-    width: auto;
-    color: #aaa;
-    text-align: right;
-  }
-  .items-count span.text,
-  .items-count span.value {
-    color: #000;
-    width: auto;
-  }
-  .items-count span.unit {
-    width: auto;
-  }
-  .items-count span.unit:last-child {
-    width: 48px;
-  }
-  .log td span.text {
-    width: 170px;
-  }
-  .log td.downloader span.text {
-    padding-left: 31px;
-  }
-  .log tr.warrior td.downloader span.text {
-    background: left bottom no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAWCAAAAAD/FgNUAAAAAXNSR0IArs4c6QAAAU1JREFUeNpt0ElvgkAUAOD++vbSW/+BPTSmJsRo1RZBZVGxVKmFQQdHQSqbuKA10YQ4JYpaQ+fw5iVfXt5yg/++6QJvZqtDegXewPrSxiDE4TW4sjcDEwfaHjrDNoyCjha+uwwCAM0wBnT74EYd4HLlzeZbf6r17RjIDIziyPbWlgxkc+daR9hJtIWxs54rQposc1QbxRVYfCY4EfgK+ZqjCiRNM+oRFKX/BmpVqZKtEBRTZovU+ADLRjQrVrI8W60Xer16p1jzD9BtKA7P03zINFRmpLUGdPc4rlorUUSOe9krTVNAUDAI97SgV6HZjvCDWSE/HIjGx3nzCRxJmi0hpD5BvWX2TuC48udY7kwM8J7KwK5uxRAM+2L0fYusZJRb+HJ22xHmlyNfwNYRt/8HXLAATZyAzXezJCvtJMD7x7t8Xk0CDhwqnZom4BfSY9/GgRksVwAAAABJRU5ErkJggg==);
-  }
-  #chart-container {
-    margin-top: 15px;
-    width: 950px;
-    height: 440px;
-    clear: both;
-    background: #fee;
-  }
-  #container {
-    position: relative;
-    width: 960px;
-    margin: 0 auto 0 auto;
-  }
-  
-  form.rescue {
-    margin: 0 auto;
-    padding: 0;
-    width: 610px;
-  }
-  p {
-    margin: 10px 0 10px 0;
-  }
-  input[type=submit] {
-    font-size: 20px;
-    padding: 3px 8px;
-  }
-  textarea {
-    width: 580px;
-    height: 200px;
-    padding: 3px 5px;
-    margin: 0 0 0 -5px;
-  }
-  
-  body.root #how-to-help {
-    margin-top: 50px;
-  }
-  #how-to-help,
-  #how-to-help-cue {
-    background: #eee;
-    margin: -8px -8px 8px -8px;
-  }
-  #how-to-help-cue h1 {
-    position: relative;
-    width: 960px;
-    margin: 0 auto 0 auto;
-    padding: 2px 0 7px 0;
-    border: none;
-    font-weight: normal;
-  }
-  #how-to-help-cue a {
-    text-decoration: none;
-  }
-  #how-to-help.expandable {
-    display: none;
-  }
-  #how-to-help-card {
-    position: relative;
-    width: 960px;
-    margin: 0 auto 0 auto;
-    padding: 12px 0 22px 0;
-  }
-  #how-to-help h1 {
-    margin: 0;
-    padding: 0;
-    border: none;
-    font-weight: normal;
-  }
-  #how-to-help .warrior-logo {
-    width: 100px;
-    float: left;
-    margin: 15px 12px 0 -15px;
-  }
-  #how-to-help .screenshots img {
-    width: 256px;
-    border: 5px solid #fff;
-  }
-  #how-to-help ol {
-    padding-left: 0;
-    margin: 0 0 10px 0;
-    list-style: decimal;
-  }
-  #how-to-help li {
-    overflow-x: visible;
-    white-space: normal;
-    margin-left: 2em;
-    padding-left: 5px;
-    list-style: decimal;
-  }
-  #how-to-help p, #how-to-help ol, #how-to-help li {
-    font-size: 16px;
-    max-width: 600px;
-  }
-  #notice_board {
-    width: 960px;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 16px;
-  }
-  
-  #error-404-message {
-    position: relative;
-    width: 960px;
-    margin: 20px auto -20px auto;
-  }
-  #error-404-message h1 {
-    border-bottom: none;
-  }
-  #error-404-message p {
-    margin-top: 0;
-    font-size: 16px;
-  }
-  
-  #active-leaderboards {
-    position: relative;
-    width: 960px;
-    margin: 10px auto 20px auto;
-    overflow-x: hidden;
-  }
-  #active-leaderboards ul {
-    margin-left: -16px; /* to hide the leftmost | */
-  }
-  #active-leaderboards li {
-    display: inline-block;
-    margin-right: 15px;
-    list-style: none;
-    vertical-align: middle;
-  
-    border-left: 1px solid #ccc;
-    padding-left: 15px;
-  }
-  #active-leaderboards a {
-    display: block;
-    text-decoration: none;
-    color: #000;
-  }
-  #active-leaderboards span.project-logo {
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-  }
-  #active-leaderboards span.project-logo img {
-    max-width: 100px;
-    max-height: 50px;
-  }
-  
-  #queuestats {
-    /* clear: both; */
-    font-size: 0.75em;
-    clear: left;
-    float: left;
-    padding-left: 15px;
-  }
-  tr.dup td span {
-    text-decoration: line-through;
-  }
+@font-face {
+  font-family: brat;
+  src: url(arial_narrow-webfont.woff);
+}
+html, body {
+  background-color: rgb(138, 207, 0);
+  font-family: brat;
+  overflow: hidden;
+  cursor: none;
+
+}
+h1 {
+  color: black;
+  font-weight: normal;
+  filter: blur(1.5px);
+}
+.splash {
+  display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+}
+.splashonsplash {
+  width: 50%;
+  height: 50%;
+}
+.splashtext {
+  font-size: 100px;
+}
+.loading {
+  position: absolute;
+  top: 60%;
+  right: 50%;
+}
