@@ -149,13 +149,14 @@
             //console.log(msg)
             document.getElementById('count').innerHTML = stats.downloader_count.fullpwnmedia.toLocaleString()
             document.getElementById( 'loading' ).style.display = 'none';
-            value = 0;
+            //console.log(stats)
             console.log(msg)
+            value = value + msg.bytes;
+            document.getElementById("ign").innerHTML = humanFileSize(stats.downloader_bytes.fullpwnmedia, true) + " - " + humanFileSize(value, true) + " since page load";
             break;
          case msg.downloader !== 'fullpwnmedia': 
-          value = value + 1;
-          console.log('IGN')
-          document.getElementById("ign").innerHTML = value;
+         console.log('IGN')
+
           break;
       }
     }
@@ -197,3 +198,25 @@
 
 
 })(window.trackerConfig);
+//https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+function humanFileSize(bytes, si=false, dp=1) {
+  const thresh = si ? 1000 : 1024;
+
+  if (Math.abs(bytes) < thresh) {
+    return bytes + ' B';
+  }
+
+  const units = si 
+    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] 
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+  let u = -1;
+  const r = 10**dp;
+
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+
+  return bytes.toFixed(dp) + ' ' + units[u];
+}
